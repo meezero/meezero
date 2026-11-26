@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1">
+<title>월넛 픽셀 서재</title>
+<meta name="description" content="따뜻한 월넛·우드 픽셀 서재에서 할 일, 일정, 장보기, 아이디어, 영상 링크를 한 곳에.">
+<meta name="theme-color" content="#2B1D14">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="월넛 서재">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="apple-touch-icon" href="./icons/icon-192.png">
+<link rel="icon" type="image/png" href="./icons/icon-192.png">
+<link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+<div class="app" id="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 16 16" width="20" height="20" shape-rendering="crispEdges" aria-hidden="true">
+          <rect x="7" y="0" width="2" height="2" fill="#D9A760"/>
+          <rect x="5" y="2" width="6" height="2" fill="#6E4A32"/>
+          <rect x="4" y="4" width="8" height="7" fill="#8A5F3F"/>
+          <rect x="5" y="11" width="6" height="2" fill="#6E4A32"/>
+          <rect x="6" y="13" width="4" height="2" fill="#4A3121"/>
+          <rect x="6" y="5" width="2" height="3" fill="#B98A5C"/>
+          <rect x="9" y="7" width="2" height="2" fill="#B98A5C"/>
+        </svg>
+      </span>
+      <h1>월넛 픽셀 서재</h1>
+    </div>
+    <div class="topbar-right">
+      <span class="today-label" id="todayLabel"></span>
+      <button class="icon-btn" id="btnSettings" aria-label="설정" title="설정">
+        <svg viewBox="0 0 16 16" width="18" height="18" shape-rendering="crispEdges" aria-hidden="true">
+          <rect x="6" y="1" width="4" height="2" fill="currentColor"/>
+          <rect x="4" y="3" width="2" height="2" fill="currentColor"/>
+          <rect x="10" y="3" width="2" height="2" fill="currentColor"/>
+          <rect x="3" y="5" width="10" height="6" fill="currentColor"/>
+          <rect x="5" y="6" width="6" height="4" fill="#2B1D14"/>
+          <rect x="4" y="11" width="2" height="2" fill="currentColor"/>
+          <rect x="10" y="11" width="2" height="2" fill="currentColor"/>
+          <rect x="6" y="13" width="4" height="2" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="stage-wrap">
+      <div class="stage" id="stage">
+        <canvas id="room" width="160" height="176" role="img" aria-label="따뜻한 월넛 서재 방. 책상, 달력, 아이디어 보드, 벽걸이 수납장, 창문, 브라운관 TV, 곰인형이 있어요."></canvas>
+
+        <div class="hotspots" id="hotspots">
+          <button class="hotspot hs-link" data-view="links" aria-label="SNS 열기">
+            <span class="tag">SNS</span>
+          </button>
+          <button class="hotspot hs-desk" data-view="todo" aria-label="해야 할 일 열기">
+            <span class="tag">할 일 <span class="badge" data-badge="todo">0</span></span>
+          </button>
+          <button class="hotspot hs-cal" data-view="calendar" aria-label="일정 달력 열기">
+            <span class="tag">달력 <span class="badge" data-badge="calendar">0</span></span>
+          </button>
+          <button class="hotspot hs-ideas" data-view="ideas" aria-label="아이디어 저장함 열기">
+            <span class="tag">아이디어 <span class="badge" data-badge="ideas">0</span></span>
+          </button>
+          <button class="hotspot hs-shop" data-view="shopping" aria-label="사야 할 것 열기">
+            <span class="tag">장보기 <span class="badge" data-badge="shopping">0</span></span>
+          </button>
+          <button class="hotspot hs-tv" data-view="videos" aria-label="영상 아이디어 피드 열기">
+            <span class="tag">영상 <span class="badge" data-badge="videos">0</span></span>
+          </button>
+
+          <button class="bear" id="bearChair" aria-label="소파 위 곰인형에게 말 걸기"></button>
+          <button class="bear" id="bearShelf" aria-label="책장 위 곰인형에게 말 걸기"></button>
+          <button class="bear" id="bearRug" aria-label="러그 위 곰인형에게 말 걸기"></button>
+        </div>
+
+        <div class="bubble" id="bubble" role="status" aria-live="polite"></div>
+      </div>
+      <p class="stage-hint" id="stageHint">오브젝트를 누르면 열려요 · 곰인형도 눌러 보세요 🧸</p>
+    </section>
+
+    <aside class="side">
+      <div class="note-card">
+        <span class="tape" aria-hidden="true"></span>
+        <div class="note-head">
+          <span class="note-pin" aria-hidden="true"></span>
+          <h2>오늘의 서재</h2>
+          <span class="note-date" id="noteDate"></span>
+        </div>
+        <ul class="note-events" id="noteEvents"></ul>
+        <div class="note-foot">
+          <button class="mini-btn" data-view="calendar">일정 보기</button>
+          <button class="mini-btn" data-view="todo">할 일 <b data-badge="todo">0</b></button>
+        </div>
+      </div>
+      <div class="note-card note-card--plain">
+        <h2 class="note-sub">서재 기록</h2>
+        <ul class="note-stats">
+          <li><button data-view="todo"><span>남은 할 일</span><b data-badge="todo">0</b></button></li>
+          <li><button data-view="shopping"><span>사야 할 것</span><b data-badge="shopping">0</b></button></li>
+          <li><button data-view="ideas"><span>아이디어</span><b data-badge="ideas">0</b></button></li>
+          <li><button data-view="videos"><span>영상 링크</span><b data-badge="videos">0</b></button></li>
+        </ul>
+      </div>
+      <div class="note-card note-card--plain side-tip">
+        <h2 class="note-sub">이렇게 써요</h2>
+        <ul class="tip-list">
+          <li>방 안 오브젝트를 눌러도 바로 열려요.</li>
+          <li>곰인형을 누르면 한마디 해요 🧸</li>
+          <li>기록은 이 기기에 자동 저장 · ⚙️에서 JSON 백업</li>
+          <li>Safari 공유 → <em>홈 화면에 추가</em>로 앱처럼</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <nav class="dock" aria-label="서재 메뉴">
+    <button class="dock-btn active" data-view="room" aria-label="서재 방">
+      <svg viewBox="0 0 16 16" width="20" height="20" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="7" y="1" width="2" height="1" fill="currentColor"/>
+        <rect x="6" y="2" width="4" height="1" fill="currentColor"/>
+        <rect x="5" y="3" width="6" height="1" fill="currentColor"/>
+        <rect x="3" y="4" width="10" height="2" fill="currentColor"/>
+        <rect x="4" y="6" width="8" height="8" fill="currentColor"/>
+        <rect x="7" y="9" width="2" height="5" fill="#2B1D14"/>
+        <rect x="5" y="7" width="2" height="2" fill="#D9A760"/>
+        <rect x="9" y="7" width="2" height="2" fill="#D9A760"/>
+      </svg>
+      <span>방</span>
+    </button>
+    <button class="dock-btn" data-view="todo" aria-label="해야 할 일">
+      <svg viewBox="0 0 16 16" width="20" height="20" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="4" y="2" width="8" height="12" fill="currentColor"/>
+        <rect x="6" y="1" width="4" height="2" fill="#2B1D14"/>
+        <rect x="5" y="5" width="2" height="2" fill="#D9A760"/>
+        <rect x="8" y="5" width="3" height="2" fill="#2B1D14"/>
+        <rect x="5" y="8" width="2" height="2" fill="#D9A760"/>
+        <rect x="8" y="8" width="3" height="2" fill="#2B1D14"/>
+        <rect x="5" y="11" width="2" height="2" fill="#C95D4B"/>
+        <rect x="8" y="11" width="3" height="2" fill="#2B1D14"/>
+      </svg>
+      <span>할 일</span>
+    </button>
+    <button class="dock-btn" data-view="calendar" aria-label="일정 달력">
+      <svg viewBox="0 0 16 16" width="20" height="20" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="2" y="3" width="12" height="11" fill="currentColor"/>
+        <rect x="2" y="3" width="12" height="3" fill="#C95D4B"/>
+        <rect x="4" y="1" width="2" height="3" fill="#D9A760"/>
+        <rect x="10" y="1" width="2" height="3" fill="#D9A760"/>
+        <rect x="4" y="8" width="2" height="2" fill="#2B1D14"/>
+        <rect x="7" y="8" width="2" height="2" fill="#2B1D14"/>
+        <rect x="10" y="8" width="2" height="2" fill="#2B1D14"/>
+        <rect x="4" y="11" width="2" height="2" fill="#2B1D14"/>
+        <rect x="7" y="11" width="2" height="2" fill="#7A9A65"/>
+        <rect x="10" y="11" width="2" height="2" fill="#2B1D14"/>
+      </svg>
+      <span>달력</span>
+    </button>
+    <button class="dock-btn" data-view="shopping" aria-label="사야 할 것">
+      <svg viewBox="0 0 16 16" width="20" height="20" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="3" y="5" width="10" height="2" fill="currentColor"/>
+        <rect x="4" y="7" width="8" height="6" fill="currentColor"/>
+        <rect x="5" y="9" width="2" height="1" fill="#2B1D14"/>
+        <rect x="8" y="9" width="3" height="1" fill="#2B1D14"/>
+        <rect x="5" y="11" width="2" height="1" fill="#2B1D14"/>
+        <rect x="8" y="11" width="3" height="1" fill="#2B1D14"/>
+        <rect x="6" y="3" width="4" height="2" fill="#7A9A65"/>
+      </svg>
+      <span>장보기</span>
+    </button>
+    <button class="dock-btn" data-view="ideas" aria-label="아이디어 저장함">
+      <svg viewBox="0 0 16 16" width="20" height="20" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="6" y="2" width="4" height="2" fill="currentColor"/>
+        <rect x="5" y="4" width="6" height="5" fill="currentColor"/>
+        <rect x="6" y="9" width="4" height="2" fill="currentColor"/>
+        <rect x="7" y="11" width="2" height="3" fill="#D9A760"/>
+        <rect x="7" y="5" width="2" height="3" fill="#D9A760"/>
+      </svg>
+      <span>아이디어</span>
+    </button>
+    <button class="dock-btn" data-view="videos" aria-label="영상 아이디어 피드">
+      <svg viewBox="0 0 16 16" width="20" height="20" shape-rendering="crispEdges" aria-hidden="true">
+        <rect x="1" y="4" width="14" height="9" fill="currentColor"/>
+        <rect x="3" y="6" width="8" height="5" fill="#D9A760"/>
+        <rect x="6" y="7" width="1" height="3" fill="#C95D4B"/>
+        <rect x="8" y="8" width="1" height="1" fill="#C95D4B"/>
+        <rect x="12" y="6" width="2" height="1" fill="#2B1D14"/>
+        <rect x="12" y="8" width="2" height="1" fill="#2B1D14"/>
+        <rect x="7" y="1" width="1" height="3" fill="currentColor"/>
+        <rect x="10" y="1" width="1" height="2" fill="currentColor"/>
+      </svg>
+      <span>영상</span>
+    </button>
+  </nav>
+
+  <!-- ============ 해야 할 일 ============ -->
+  <section class="panel" id="panel-todo" hidden aria-labelledby="panel-todo-title">
+    <div class="panel-card">
+      <header class="panel-head">
+        <h2 id="panel-todo-title"><span class="panel-emoji" aria-hidden="true">📋</span>해야 할 일</h2>
+        <button class="icon-btn close-panel" aria-label="닫기">✕</button>
+      </header>
+      <div class="panel-body">
+        <form class="add-row" id="todoForm">
+          <input id="todoInput" type="text" maxlength="120" placeholder="할 일을 적어 주세요" autocomplete="off">
+          <button type="submit" class="pix-btn accent">추가</button>
+        </form>
+        <div class="chips" id="todoFilters" role="tablist">
+          <button class="chip active" data-filter="all" role="tab">전체 <b>0</b></button>
+          <button class="chip" data-filter="open" role="tab">남음 <b>0</b></button>
+          <button class="chip" data-filter="done" role="tab">완료 <b>0</b></button>
+        </div>
+        <ul class="list todo-list" id="todoList"></ul>
+        <p class="empty" id="todoEmpty" hidden>아직 적어 둔 게 없어요. 오늘 할 일 하나만 적어 볼까요?</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 일정 달력 ============ -->
+  <section class="panel" id="panel-calendar" hidden aria-labelledby="panel-cal-title">
+    <div class="panel-card">
+      <header class="panel-head">
+        <h2 id="panel-cal-title"><span class="panel-emoji" aria-hidden="true">🗓️</span>일정 달력</h2>
+        <button class="icon-btn close-panel" aria-label="닫기">✕</button>
+      </header>
+      <div class="panel-body">
+        <div class="cal-head">
+          <button class="icon-btn cal-nav" id="calPrev" aria-label="이전 달">◀</button>
+          <div class="cal-title" id="calTitle">2026년 11월</div>
+          <button class="icon-btn cal-nav" id="calNext" aria-label="다음 달">▶</button>
+          <button class="pix-btn ghost tiny" id="calToday">오늘</button>
+        </div>
+        <div class="cal-week" aria-hidden="true">
+          <span class="sun">일</span><span>월</span><span>화</span><span>수</span><span>목</span><span>금</span><span class="sat">토</span>
+        </div>
+        <div class="cal-grid" id="calGrid" role="grid" aria-label="월간 달력"></div>
+        <div class="cal-day">
+          <h3 id="calDayTitle">오늘 일정</h3>
+          <ul class="list" id="calEvents"></ul>
+          <p class="empty" id="calEmpty" hidden>이날은 비어 있어요. 일정을 적어 두면 달력에 도트가 찍혀요.</p>
+          <form class="add-row" id="eventForm">
+            <input id="eventInput" type="text" maxlength="120" placeholder="일정을 적어 주세요" autocomplete="off">
+            <button type="submit" class="pix-btn accent">추가</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 사야 할 것 ============ -->
+  <section class="panel" id="panel-shopping" hidden aria-labelledby="panel-shop-title">
+    <div class="panel-card">
+      <header class="panel-head">
+        <h2 id="panel-shop-title"><span class="panel-emoji" aria-hidden="true">🧺</span>사야 할 것</h2>
+        <button class="icon-btn close-panel" aria-label="닫기">✕</button>
+      </header>
+      <div class="panel-body">
+        <form class="add-row add-row--wrap" id="shopForm">
+          <input id="shopName" type="text" maxlength="80" placeholder="품목" autocomplete="off" required>
+          <input id="shopQty" type="text" maxlength="40" placeholder="수량·메모" autocomplete="off">
+          <select id="shopCat" aria-label="카테고리">
+            <option value="생활">생활</option>
+            <option value="작업">작업</option>
+            <option value="기타">기타</option>
+          </select>
+          <button type="submit" class="pix-btn accent">담기</button>
+        </form>
+        <div class="shop-summary">
+          <span id="shopSummary">0개 남음</span>
+          <button class="pix-btn ghost tiny" id="shopClearDone">완료 항목 비우기</button>
+        </div>
+        <ul class="list shop-list" id="shopList"></ul>
+        <p class="empty" id="shopEmpty" hidden>바구니가 비어 있어요. 필요한 것 하나 담아 볼까요?</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 아이디어 저장함 ============ -->
+  <section class="panel" id="panel-ideas" hidden aria-labelledby="panel-ideas-title">
+    <div class="panel-card">
+      <header class="panel-head">
+        <h2 id="panel-ideas-title"><span class="panel-emoji" aria-hidden="true">📌</span>아이디어 저장함</h2>
+        <button class="icon-btn close-panel" aria-label="닫기">✕</button>
+      </header>
+      <div class="panel-body">
+        <div class="search-row">
+          <input id="ideaSearch" type="search" placeholder="키워드로 찾기 (제목·메모·태그)" autocomplete="off">
+          <button class="pix-btn accent" id="ideaAddBtn">새 아이디어</button>
+        </div>
+        <div class="chips" id="ideaTabs" role="tablist">
+          <button class="chip active" data-cat="미리캔버스" role="tab">미리캔버스 <b>0</b></button>
+          <button class="chip" data-cat="건강 공부" role="tab">건강 공부 <b>0</b></button>
+          <button class="chip" data-cat="영상제작" role="tab">영상제작 <b>0</b></button>
+          <button class="chip" data-cat="기타" role="tab">기타 <b>0</b></button>
+        </div>
+        <div class="idea-grid" id="ideaGrid"></div>
+        <p class="empty" id="ideasEmpty" hidden>이 칸은 아직 비어 있어요. 떠오른 생각을 붙여 두세요.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 영상 아이디어 링크 피드 ============ -->
+  <section class="panel" id="panel-videos" hidden aria-labelledby="panel-videos-title">
+    <div class="panel-card">
+      <header class="panel-head">
+        <h2 id="panel-videos-title"><span class="panel-emoji" aria-hidden="true">📺</span>영상 아이디어 피드</h2>
+        <button class="icon-btn close-panel" aria-label="닫기">✕</button>
+      </header>
+      <div class="panel-body">
+        <form class="link-form" id="videoForm">
+          <div class="link-form-row">
+            <input id="videoUrl" type="url" placeholder="링크 붙여넣기 (YouTube·Instagram 등)" autocomplete="off" required>
+            <button type="submit" class="pix-btn accent">담기</button>
+          </div>
+          <details class="extra" id="videoExtra">
+            <summary>제목 · 메모 · 태그 · 썸네일 <em>(선택)</em></summary>
+            <div class="extra-body">
+              <div class="link-form-row">
+                <input id="videoTitle" type="text" maxlength="100" placeholder="제목 (선택)" autocomplete="off">
+                <input id="videoTags" type="text" maxlength="80" placeholder="태그 (예: 릴스, 인트로)" autocomplete="off">
+              </div>
+              <input id="videoMemo" type="text" maxlength="200" placeholder="메모 (선택) — 왜 저장했는지 한 줄" autocomplete="off">
+              <div class="link-form-row">
+                <input id="videoThumbUrl" type="text" maxlength="400" placeholder="썸네일 이미지 URL (선택)" autocomplete="off">
+                <label class="pix-btn ghost file-btn" for="videoThumbFile">이미지 선택
+                  <input type="file" id="videoThumbFile" accept="image/*" hidden>
+                </label>
+              </div>
+            </div>
+          </details>
+          <p class="thumb-preview" id="videoAutoThumb" hidden></p>
+        </form>
+        <div class="feed-tools">
+          <div class="chips" id="videoFilters" role="tablist">
+            <button class="chip active" data-plat="all" role="tab">전체</button>
+            <button class="chip" data-plat="youtube" role="tab">YouTube</button>
+            <button class="chip" data-plat="instagram" role="tab">Instagram</button>
+            <button class="chip" data-plat="other" role="tab">기타 링크</button>
+          </div>
+          <span class="feed-count" id="videoCount">0개</span>
+        </div>
+        <div class="feed" id="videoFeed"></div>
+        <p class="empty" id="videosEmpty" hidden>저장한 링크가 없어요. 레퍼런스 영상을 하나 담아 보세요.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SNS 바로가기 ============ -->
+  <section class="panel" id="panel-links" hidden aria-labelledby="panel-links-title">
+    <div class="panel-card">
+      <header class="panel-head">
+        <h2 id="panel-links-title"><span class="panel-emoji" aria-hidden="true">🔖</span>SNS</h2>
+        <button class="icon-btn close-panel" aria-label="닫기">✕</button>
+      </header>
+      <div class="panel-body">
+        <p class="link-note">자주 가는 곳을 모아 둔 칸이에요. 주소는 이 기기에만 저장되고, 연필 버튼을 누르면 언제든지 바꿀 수 있어요.</p>
+        <ul class="link-list" id="linkList"></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 아이디어 편집 모달 ============ -->
+  <div class="modal" id="ideaModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="ideaModalTitle">
+      <h2 id="ideaModalTitle">아이디어 적기</h2>
+      <form id="ideaForm">
+        <label class="field">
+          <span>카테고리</span>
+          <select id="ideaCat">
+            <option value="미리캔버스">미리캔버스</option>
+            <option value="건강 공부">건강 공부</option>
+            <option value="영상제작">영상제작</option>
+            <option value="기타">기타</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>제목</span>
+          <input id="ideaTitle" type="text" maxlength="80" required autocomplete="off">
+        </label>
+        <label class="field">
+          <span>메모</span>
+          <textarea id="ideaBody" rows="6" maxlength="4000"></textarea>
+        </label>
+        <label class="field">
+          <span>태그 <em>(쉼표로 구분)</em></span>
+          <input id="ideaTags" type="text" maxlength="120" placeholder="예: 겨울, 손그림, 템플릿" autocomplete="off">
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="pix-btn ghost" data-close-modal>취소</button>
+          <button type="submit" class="pix-btn accent">저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ 영상 편집 모달 ============ -->
+  <div class="modal" id="videoModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="videoModalTitle">
+      <h2 id="videoModalTitle">링크 고치기</h2>
+      <form id="videoEditForm">
+        <label class="field">
+          <span>링크</span>
+          <input id="editUrl" type="url" required autocomplete="off">
+        </label>
+        <label class="field">
+          <span>제목</span>
+          <input id="editTitle" type="text" maxlength="100" autocomplete="off">
+        </label>
+        <label class="field">
+          <span>메모</span>
+          <textarea id="editMemo" rows="3" maxlength="400"></textarea>
+        </label>
+        <label class="field">
+          <span>태그</span>
+          <input id="editTags" type="text" maxlength="80" autocomplete="off">
+        </label>
+        <div class="field">
+          <span>썸네일 이미지 (선택)</span>
+          <div class="link-form-row">
+            <input id="editThumb" type="text" maxlength="400" placeholder="이미지 URL" autocomplete="off">
+            <label class="pix-btn ghost file-btn" for="editThumbFile">이미지 선택
+              <input type="file" id="editThumbFile" accept="image/*" hidden>
+            </label>
+          </div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="pix-btn ghost" data-close-modal>취소</button>
+          <button type="submit" class="pix-btn accent">저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ 바로가기 주소 편집 모달 ============ -->
+  <div class="modal" id="linkModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="linkModalTitle">
+      <h2 id="linkModalTitle">SNS 주소 고치기</h2>
+      <form id="linkForm">
+        <label class="field">
+          <span>이름</span>
+          <input id="linkName" type="text" maxlength="40" required autocomplete="off">
+        </label>
+        <label class="field">
+          <span>주소</span>
+          <input id="linkUrl" type="text" maxlength="300" required autocomplete="off" placeholder="https://">
+        </label>
+        <div class="modal-actions">
+          <button type="button" class="pix-btn ghost" data-close-modal>취소</button>
+          <button type="submit" class="pix-btn accent">저장</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============ 설정 모달 ============ -->
+  <div class="modal" id="settingsModal" hidden>
+    <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+      <h2 id="settingsTitle">서재 설정</h2>
+      <p class="modal-note">모든 기록은 이 기기 브라우저(localStorage)에만 저장돼요. 백업 파일을 따로 받아 두면 기기를 바꿔도 되살릴 수 있어요.</p>
+      <div class="settings-list">
+        <button class="pix-btn" id="btnExport">JSON 백업 내보내기</button>
+        <button class="pix-btn" id="btnImport">JSON 복원 가져오기</button>
+        <input type="file" id="importFile" accept="application/json,.json" hidden>
+        <button class="pix-btn danger" id="btnReset">전체 초기화</button>
+      </div>
+      <div class="settings-info">
+        <p><strong>아이폰 홈 화면에 추가</strong><br>Safari로 열고 <em>공유 → 홈 화면에 추가</em>를 누르면 앱처럼 전체 화면으로 열려요.</p>
+        <p class="settings-meta">월넛 픽셀 서재 · local-first PWA · <span id="storageInfo">—</span></p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="pix-btn ghost" data-close-modal>닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</div>
+<script src="./room.js"></script>
+<script src="./app.js"></script>
+</body>
+</html>

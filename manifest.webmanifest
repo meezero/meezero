@@ -1,0 +1,20 @@
+{
+  "name": "월넛 픽셀 서재",
+  "short_name": "월넛 서재",
+  "description": "따뜻한 월넛·우드 픽셀 서재에서 할 일, 일정, 장보기, 아이디어, 영상 링크를 한 곳에 모아 두는 나만의 작업실.",
+  "lang": "ko",
+  "dir": "ltr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
+  "orientation": "portrait-primary",
+  "background_color": "#2B1D14",
+  "theme_color": "#2B1D14",
+  "categories": ["productivity", "lifestyle"],
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
