@@ -16,8 +16,9 @@ GitHub Pages처럼 하위 경로(`/pixel-office/`)에서 열려도 되도록 모
 
 ## 배포 (GitHub Pages)
 
-- 대상 저장소: `meezero/pixel-office` (Public)
-- 주소: `https://meezero.github.io/pixel-office/`
+- 저장소: `meezero/meezero` (Public) — <https://github.com/meezero/meezero>
+- 주소: <https://meezero.github.io/meezero/>
+- Pages 소스 브랜치: `gh-pages` (루트 `/`). 내용을 고칠 때는 `main`에 커밋한 뒤 `gh-pages`에도 함께 push합니다.
 - 정적 파일만 올라갑니다. 기록은 방문자 브라우저의 `localStorage`에만 저장되고 서버로 전송되는 값은 없습니다.
 
 ## 아이폰에 앱처럼 설치
